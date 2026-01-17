@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ReactStudyTool/static/css/main.ffc30d51.css",
+    "main.js": "/ReactStudyTool/static/js/main.75019bc6.js",
+    "index.html": "/ReactStudyTool/index.html",
+    "main.ffc30d51.css.map": "/ReactStudyTool/static/css/main.ffc30d51.css.map",
+    "main.75019bc6.js.map": "/ReactStudyTool/static/js/main.75019bc6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ffc30d51.css",
+    "static/js/main.75019bc6.js"
+  ]
+}
