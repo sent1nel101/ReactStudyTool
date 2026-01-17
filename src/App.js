@@ -1,55 +1,50 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './components/Home';
-import Lesson from './components/Lesson';
+/**
+ * App.js - Main Application Component
+ *
+ * This is the root component of the React Learning Platform.
+ * It sets up the main layout structure including the header and
+ * configures client-side routing for navigation between pages.
+ *
+ * @module App
+ */
 
+import React from "react"
+import { Routes, Route } from "react-router-dom"
+import Home from "./components/Home"
+import Lesson from "./components/Lesson"
+import "./styles/App.css"
+
+/**
+ * Main Application Component
+ *
+ * Renders the application shell with:
+ * - A gradient header with branding
+ * - Route definitions for Home and Lesson pages
+ *
+ * @returns {JSX.Element} The rendered application
+ */
 function App() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--gradient-bg-subtle)',
-      color: 'var(--text-primary)'
-    }}>
-        <header style={{
-          background: 'var(--gradient-primary)',
-          padding: '20px 0',
-          boxShadow: 'var(--shadow-lg)',
-          borderBottom: '1px solid var(--border-primary)'
-        }}>
-          <div style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '0 20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <h1 style={{
-              margin: 0,
-              fontSize: '2rem',
-              fontWeight: '700',
-              color: 'white',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-            }}>
-              React Learning Platform
-            </h1>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '15px',
-              fontSize: '14px',
-              color: 'rgba(255,255,255,0.9)'
-            }}>
-              <span>Learn • Practice • Master</span>
-            </div>
+    <div className="app-container">
+      <header className="app-header">
+        <div className="header-content">
+          <h1 className="header-title">
+            Cloud Designs React Learning Platform
+          </h1>
+          <div className="header-tagline">
+            <span>Learn • Practice • Master</span>
           </div>
-        </header>
+        </div>
+      </header>
+
+      <main className="app-main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/lesson/:id" element={<Lesson />} />
         </Routes>
-      </div>
-  );
+      </main>
+    </div>
+  )
 }
 
-export default App;
+export default App

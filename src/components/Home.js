@@ -1,245 +1,289 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { lessons } from '../data/lessons';
+/**
+ * Home.js - Lesson Dashboard Component
+ *
+ * Displays the main dashboard with all available lessons in a card grid.
+ * Handles lesson progress persistence via localStorage and provides
+ * visual feedback on completion status.
+ *
+ * @module Home
+ */
 
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { lessons } from '../data/lessons';
+import './Home.css';
+
+/**
+ * Status badge colors and labels for different progress states
+ * @constant {Object}
+ */
+const STATUS_CONFIG = {
+  completed: {
+    className: 'status-badge--completed',
+    label: 'Completed',
+    ariaLabel: 'Lesson completed'
+  },
+  'needs-more-practice': {
+    className: 'status-badge--in-progress',
+    label: 'In Progress',
+    ariaLabel: 'Lesson in progress'
+  },
+  'not-attempted': {
+    className: 'status-badge--not-started',
+    label: 'Not Started',
+    ariaLabel: 'Lesson not started'
+  }
+};
+
+/**
+ * Difficulty level configuration for styling
+ * @constant {Object}
+ */
+const DIFFICULTY_CONFIG = {
+  beginner: 'difficulty-badge--beginner',
+  intermediate: 'difficulty-badge--intermediate',
+  advanced: 'difficulty-badge--advanced'
+};
+
+/**
+ * StatusBadge Component
+ * Displays a colored badge indicating lesson completion status
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.status - Current status: 'completed' | 'needs-more-practice' | 'not-attempted'
+ * @returns {JSX.Element} Rendered status badge
+ */
+function StatusBadge({ status }) {
+  const config = STATUS_CONFIG[status] || STATUS_CONFIG['not-attempted'];
+
+  return (
+    <div
+      className={`status-badge ${config.className}`}
+      role="status"
+      aria-label={config.ariaLabel}
+    >
+      {config.label}
+    </div>
+  );
+}
+
+StatusBadge.propTypes = {
+  status: PropTypes.oneOf(['completed', 'needs-more-practice', 'not-attempted'])
+};
+
+StatusBadge.defaultProps = {
+  status: 'not-attempted'
+};
+
+/**
+ * DifficultyBadge Component
+ * Displays a colored badge indicating lesson difficulty level
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.difficulty - Difficulty level: 'beginner' | 'intermediate' | 'advanced'
+ * @returns {JSX.Element} Rendered difficulty badge
+ */
+function DifficultyBadge({ difficulty }) {
+  const className = DIFFICULTY_CONFIG[difficulty] || DIFFICULTY_CONFIG.beginner;
+
+  return (
+    <span className={`difficulty-badge ${className}`}>
+      {difficulty}
+    </span>
+  );
+}
+
+DifficultyBadge.propTypes = {
+  difficulty: PropTypes.oneOf(['beginner', 'intermediate', 'advanced'])
+};
+
+DifficultyBadge.defaultProps = {
+  difficulty: 'beginner'
+};
+
+/**
+ * LessonCard Component
+ * Renders an individual lesson card with metadata and navigation
+ *
+ * @param {Object} props - Component props
+ * @param {Object} props.lesson - Lesson data object
+ * @param {string} props.status - Current completion status
+ * @returns {JSX.Element} Rendered lesson card
+ */
+function LessonCard({ lesson, status }) {
+  return (
+    <article className="lesson-card" data-testid={`lesson-card-${lesson.id}`}>
+      <div className="lesson-card__content">
+        <div className="lesson-card__icon" aria-hidden="true">
+          {lesson.id}
+        </div>
+
+        <div className="lesson-card__details">
+          <header className="lesson-card__header">
+            <h3 className="lesson-card__title">
+              <Link
+                to={`/lesson/${lesson.id}`}
+                className="lesson-card__link"
+              >
+                {lesson.title}
+              </Link>
+            </h3>
+            <StatusBadge status={status} />
+          </header>
+
+          <div className="lesson-card__difficulty">
+            <DifficultyBadge difficulty={lesson.difficulty} />
+          </div>
+
+          <p className="lesson-card__description">
+            {lesson.description}
+          </p>
+
+          <footer className="lesson-card__footer">
+            <span className="lesson-card__time">
+              {lesson.estimatedTime}
+            </span>
+
+            <Link
+              to={`/lesson/${lesson.id}`}
+              className="lesson-card__button"
+              aria-label={`Start learning ${lesson.title}`}
+            >
+              Start Learning
+            </Link>
+          </footer>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+LessonCard.propTypes = {
+  lesson: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    difficulty: PropTypes.string.isRequired,
+    estimatedTime: PropTypes.string.isRequired,
+    status: PropTypes.string
+  }).isRequired,
+  status: PropTypes.string.isRequired
+};
+
+/**
+ * Home Component
+ * Main dashboard displaying all lessons with progress tracking
+ *
+ * Features:
+ * - Loads and persists lesson progress from localStorage
+ * - Displays lessons in a responsive grid layout
+ * - Shows visual status indicators for each lesson
+ * - Handles errors gracefully when localStorage is unavailable
+ *
+ * @returns {JSX.Element} Rendered home dashboard
+ */
 function Home() {
   const [lessonProgress, setLessonProgress] = useState({});
+  const [loadError, setLoadError] = useState(null);
 
-  useEffect(() => {
-    // Load progress from localStorage
-    const savedProgress = localStorage.getItem('lessonProgress');
-    if (savedProgress) {
-      setLessonProgress(JSON.parse(savedProgress));
+  /**
+   * Load progress from localStorage on component mount
+   * Wrapped in useCallback for consistency and potential reuse
+   */
+  const loadProgress = useCallback(() => {
+    try {
+      const savedProgress = localStorage.getItem('lessonProgress');
+      if (savedProgress) {
+        const parsed = JSON.parse(savedProgress);
+        // Validate that parsed data is an object
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          setLessonProgress(parsed);
+        }
+      }
+      setLoadError(null);
+    } catch (error) {
+      console.error('Failed to load lesson progress:', error);
+      setLoadError('Unable to load your progress. Starting fresh.');
+      setLessonProgress({});
     }
   }, []);
 
+  useEffect(() => {
+    loadProgress();
+  }, [loadProgress]);
 
+  /**
+   * Memoized lesson list with computed status
+   * Prevents recalculation on every render
+   */
+  const lessonsWithStatus = useMemo(() => {
+    return lessons.map(lesson => ({
+      ...lesson,
+      currentStatus: lessonProgress[lesson.id] || lesson.status || 'not-attempted'
+    }));
+  }, [lessonProgress]);
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'completed': 
-        return (
-          <div style={{
-            backgroundColor: 'var(--accent-success)',
-            color: 'white',
-            padding: '4px 8px',
-            borderRadius: '6px',
-            fontSize: '12px',
-            fontWeight: '500'
-          }}>
-            Completed
-          </div>
-        );
-      case 'needs-more-practice': 
-        return (
-          <div style={{
-            backgroundColor: 'var(--accent-warning)',
-            color: 'white',
-            padding: '4px 8px',
-            borderRadius: '6px',
-            fontSize: '12px',
-            fontWeight: '500'
-          }}>
-            In Progress
-          </div>
-        );
-      case 'not-attempted':
-      default: 
-        return (
-          <div style={{
-            backgroundColor: 'var(--bg-tertiary)',
-            color: 'var(--text-secondary)',
-            padding: '4px 8px',
-            borderRadius: '6px',
-            fontSize: '12px',
-            fontWeight: '500',
-            border: '1px solid var(--border-primary)'
-          }}>
-            Not Started
-          </div>
-        );
-    }
-  };
+  /**
+   * Calculate overall progress statistics
+   */
+  const progressStats = useMemo(() => {
+    const completed = lessonsWithStatus.filter(
+      l => l.currentStatus === 'completed'
+    ).length;
+    const inProgress = lessonsWithStatus.filter(
+      l => l.currentStatus === 'needs-more-practice'
+    ).length;
+    const total = lessonsWithStatus.length;
+
+    return { completed, inProgress, total };
+  }, [lessonsWithStatus]);
 
   return (
-    <div style={{ 
-      padding: '40px 20px', 
-      maxWidth: '1200px', 
-      margin: '0 auto',
-      minHeight: '100vh',
-      background: 'transparent',
-      color: 'var(--text-primary)'
-    }}>
-      <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-        <h1 style={{ 
-          fontSize: '2.5rem', 
-          margin: '0 0 16px 0',
-          color: 'var(--text-primary)',
-          fontWeight: '700',
-          letterSpacing: '-0.02em'
-        }}>
+    <div className="home-container">
+      {/* Hero Section */}
+      <section className="home-hero" aria-labelledby="home-title">
+        <h1 id="home-title" className="home-hero__title">
           Master React Development
         </h1>
-        <p style={{ 
-          fontSize: '1.125rem', 
-          color: 'var(--text-secondary)', 
-          margin: 0,
-          maxWidth: '600px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          lineHeight: '1.6'
-        }}>
-          From fundamentals to employment-ready skills. Learn React through interactive lessons and hands-on coding exercises.
+        <p className="home-hero__subtitle">
+          From fundamentals to employment-ready skills. Learn React through
+          interactive lessons and hands-on coding exercises.
         </p>
-      </div>
-      
-      <div>
-        <h2 style={{ 
-          fontSize: '1.875rem', 
-          marginBottom: '40px',
-          color: 'var(--text-primary)',
-          textAlign: 'center',
-          fontWeight: '600'
-        }}>
+
+        {/* Progress Summary */}
+        {progressStats.completed > 0 && (
+          <div className="home-hero__progress" role="status" aria-live="polite">
+            <span className="progress-stat">
+              {progressStats.completed} of {progressStats.total} lessons completed
+            </span>
+          </div>
+        )}
+      </section>
+
+      {/* Error Message */}
+      {loadError && (
+        <div className="home-error" role="alert">
+          {loadError}
+        </div>
+      )}
+
+      {/* Lessons Grid */}
+      <section className="home-lessons" aria-labelledby="lessons-title">
+        <h2 id="lessons-title" className="home-lessons__title">
           Learning Path
         </h2>
-        <div style={{ 
-          display: 'grid', 
-          gap: '24px',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))'
-        }}>
-          {lessons.map(lesson => {
-            const status = lessonProgress[lesson.id] || lesson.status;
-            return (
-              <div key={lesson.id} style={{
-                border: '1px solid var(--border-primary)',
-                borderRadius: 'var(--border-radius-lg)',
-                padding: '32px',
-                background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)',
-                transition: 'all 0.2s ease',
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                boxShadow: 'var(--shadow)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
-                e.currentTarget.style.borderColor = 'var(--accent-primary)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'var(--shadow)';
-                e.currentTarget.style.borderColor = 'var(--border-primary)';
-              }}>                
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: 'var(--border-radius)',
-                    backgroundColor: 'var(--bg-tertiary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.5rem',
-                    flexShrink: 0,
-                    border: '1px solid var(--border-primary)',
-                    color: 'var(--accent-primary)',
-                    fontWeight: '600'
-                  }}>
-                    {lesson.id}
-                  </div>
-                  
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
-                      <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600' }}>
-                        <Link 
-                          to={`/lesson/${lesson.id}`} 
-                          style={{ 
-                            textDecoration: 'none', 
-                            color: 'var(--text-primary)',
-                            transition: 'color 0.2s ease'
-                          }}
-                          onMouseEnter={(e) => e.target.style.color = 'var(--accent-primary)'}
-                          onMouseLeave={(e) => e.target.style.color = 'var(--text-primary)'}
-                        >
-                          {lesson.title}
-                        </Link>
-                      </h3>
-                      {getStatusBadge(status)}
-                    </div>
-                    
-                    <div style={{ marginBottom: '16px' }}>
-                      <span style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        borderRadius: '6px',
-                        backgroundColor: lesson.difficulty === 'beginner' ? 'rgba(16, 185, 129, 0.1)' :
-                                       lesson.difficulty === 'intermediate' ? 'rgba(245, 158, 11, 0.1)' :
-                                       'rgba(239, 68, 68, 0.1)',
-                        color: lesson.difficulty === 'beginner' ? 'var(--accent-success)' :
-                               lesson.difficulty === 'intermediate' ? 'var(--accent-warning)' :
-                               'var(--accent-danger)',
-                        textTransform: 'capitalize',
-                        fontWeight: '500',
-                        border: `1px solid ${lesson.difficulty === 'beginner' ? 'var(--accent-success)' :
-                                lesson.difficulty === 'intermediate' ? 'var(--accent-warning)' :
-                                'var(--accent-danger)'}`
-                      }}>
-                        {lesson.difficulty}
-                      </span>
-                    </div>
-                    
-                    <p style={{ 
-                      margin: '0 0 20px 0', 
-                      color: 'var(--text-secondary)',
-                      lineHeight: '1.6',
-                      fontSize: '0.9rem'
-                    }}>
-                      {lesson.description}
-                    </p>
-                    
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '12px'
-                    }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        gap: '16px', 
-                        fontSize: '0.875rem', 
-                        color: 'var(--text-tertiary)' 
-                      }}>
-                        <span>{lesson.estimatedTime}</span>
-                      </div>
-                      
-                      <Link 
-                        to={`/lesson/${lesson.id}`}
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: 'var(--border-radius)',
-                          backgroundColor: 'var(--accent-primary)',
-                          color: 'white',
-                          fontSize: '0.875rem',
-                          fontWeight: '500',
-                          textDecoration: 'none',
-                          transition: 'background-color 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-secondary)'}
-                        onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--accent-primary)'}
-                      >
-                        Start Learning
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+
+        <div className="lessons-grid">
+          {lessonsWithStatus.map(lesson => (
+            <LessonCard
+              key={lesson.id}
+              lesson={lesson}
+              status={lesson.currentStatus}
+            />
+          ))}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

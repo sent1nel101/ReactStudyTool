@@ -1,4 +1,22 @@
-/* Modern Theme System with Dark Mode Default */
+/**
+ * index.css - Global Styles and Theme System
+ *
+ * This file contains:
+ * - CSS custom properties (variables) for theming
+ * - Light and dark theme definitions
+ * - Global typography and resets
+ * - Code editor styling overrides
+ * - Syntax highlighting token colors
+ * - Responsive design breakpoints
+ * - Accessibility utilities
+ *
+ * The theme system uses CSS custom properties with data-theme attribute
+ * on the document root for runtime theme switching.
+ */
+
+/* =================================================================
+   Theme System - Modern Theme System with Dark Mode Default
+   ================================================================= */
 
 /* Light Theme Variables */
 :root[data-theme="light"] {

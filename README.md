@@ -1,47 +1,49 @@
 # React Learning Platform
 
-A comprehensive, interactive React learning platform with built-in code editor, real-time testing, and progress tracking. Perfect for developers learning React fundamentals and modern patterns.
+A comprehensive, interactive React learning platform with a built-in code editor, real-time testing, and progress tracking. Designed for developers learning React fundamentals through hands-on practice.
 
-## ✨ Features
+## Features
 
-### 🎓 Interactive Learning
+### Interactive Learning
 - **6 comprehensive lessons** covering React fundamentals to advanced concepts
 - **Theory-Practice approach** with explanations, examples, and hands-on exercises
-- **Real-time code testing** with automated validation and feedback
-- **Progress tracking** with localStorage persistence
+- **Real-time code testing** with automated validation and immediate feedback
+- **Progress tracking** with localStorage persistence across sessions
 
-### 💻 Built-in IDE Experience
+### Built-in IDE Experience
 - **Syntax highlighting** powered by PrismJS
 - **Code editor** with React JSX support
-- **Live preview** and error detection
-- **Code formatting** and beautification
-- **Reset functionality** to start exercises fresh
+- **Live error detection** via Babel transformation
+- **Reset and solution reveal** functionality for exercises
 
-### 🎨 Modern UI/UX
-- **Professional dark theme** with GitHub-inspired design
+### Modern UI/UX
+- **Professional dark theme** with CSS custom properties
 - **Fully responsive** mobile-first design
 - **Touch-friendly** interface for mobile learning
-- **Visual progress indicators** with color-coded status
-- **Smooth animations** and transitions
+- **Celebration animations** with confetti on success
+- **Accessible** with ARIA attributes and keyboard navigation
 
-## 📚 Lesson Content
+## Lesson Content
 
-1. **React Components** - Component basics, JSX, and structure
-2. **Props** - Passing data between components
-3. **useState Hook** - State management and updates
-4. **useEffect Hook** - Side effects and lifecycle management
-5. **useContext Hook** - Global state and context API
-6. **Event Handling & Forms** - User interactions and form management
+| # | Title | Difficulty | Topics Covered |
+|---|-------|------------|----------------|
+| 1 | Creating Components | Beginner | Functional components, JSX, component structure |
+| 2 | Using State with useState | Beginner | useState hook, state updates, re-rendering |
+| 3 | Props and Component Communication | Beginner | Props, prop drilling, callbacks, render props |
+| 4 | Side Effects with useEffect | Intermediate | useEffect, dependencies, cleanup, data fetching |
+| 5 | Context API & useContext | Intermediate | Context creation, providers, consumers |
+| 6 | Event Handling & Forms | Beginner | Controlled components, form validation, events |
 
 Each lesson includes:
-- 📖 **Theory tab** - Clear explanations and concepts
-- 💡 **Example tab** - Working code demonstrations
-- 🛠️ **Exercise tab** - Hands-on coding challenges with tests
+- **Theory tab** - Clear explanations with code examples
+- **Example tab** - Working code demonstrations
+- **Exercises tab** - Multiple hands-on coding challenges with tests
+- **Quiz tab** - Multiple choice knowledge checks with explanations
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js (version 14 or higher)
+- Node.js (version 16 or higher)
 - npm or yarn
 
 ### Installation
@@ -64,81 +66,127 @@ npm start
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## 🛠️ Available Scripts
+## Available Scripts
 
-- `npm start` - Run development server
-- `npm test` - Launch test runner
-- `npm run build` - Build for production
-- `npm run eject` - Eject Create React App configuration
+| Command | Description |
+|---------|-------------|
+| `npm start` | Run development server |
+| `npm test` | Launch test runner in watch mode |
+| `npm run build` | Build for production |
+| `npm run deploy` | Deploy to GitHub Pages |
 
-## 🏗️ Technical Architecture
+## Project Structure
 
-### Built With
-- **React 19** - Latest React features and hooks
-- **React Router v7** - Client-side routing
-- **Babel Standalone** - JSX transformation for code testing
-- **PrismJS** - Syntax highlighting
-- **Monaco Editor** - Advanced code editing capabilities
-- **Canvas Confetti** - Success animations
-
-### Key Components
-- **Home Component** - Lesson dashboard with progress tracking
-- **Lesson Component** - Interactive lesson interface with tabbed content
-- **CodeTester Component** - Real-time code execution and validation
-- **Responsive Design System** - CSS custom properties for theming
-
-### Project Structure
 ```
 src/
 ├── components/
-│   ├── Home.js          # Main lesson dashboard
-│   ├── Lesson.js        # Individual lesson interface
-│   └── CodeTester.js    # Code testing functionality
+│   ├── Home.js           # Lesson dashboard with progress tracking
+│   ├── Home.css          # Home component styles
+│   ├── Home.test.js      # Home component tests
+│   ├── Lesson.js         # Individual lesson interface
+│   ├── Lesson.css        # Lesson component styles
+│   ├── Lesson.test.js    # Lesson component tests
+│   ├── CodeTester.js     # Code testing and validation
+│   ├── CodeTester.css    # CodeTester styles
+│   └── CodeTester.test.js # CodeTester tests
 ├── data/
-│   └── lessons.js       # Lesson content and test cases
+│   └── lessons.js        # Lesson content, exercises, and tests
 ├── styles/
-│   ├── index.css        # Global styles and CSS variables
-│   └── Lesson.css       # Lesson-specific styling
-└── App.js               # Main application component
+│   ├── App.css           # Application-level styles
+│   └── index.css         # Global styles and CSS variables
+├── App.js                # Main application component
+├── App.test.js           # App component tests
+└── index.js              # Application entry point
 ```
 
-## 🎯 Learning Objectives
+## Architecture
 
-By completing this platform, learners will:
+### Component Hierarchy
+```
+App
+├── Header (app branding)
+└── Routes
+    ├── Home (lesson dashboard)
+    │   └── LessonCard[] (lesson previews)
+    └── Lesson (lesson interface)
+        ├── TabNavigation
+        ├── TheoryPanel
+        ├── ExamplePanel
+        ├── ExercisesPanel
+        │   ├── ExerciseSelector
+        │   ├── CodeEditor
+        │   └── CodeTester
+        └── QuizPanel
+            └── QuizQuestion[]
+```
 
-- ✅ Understand React component architecture
-- ✅ Master state management with hooks
-- ✅ Handle user interactions and forms
-- ✅ Implement context for global state
-- ✅ Follow React best practices and patterns
-- ✅ Build employment-ready React skills
+### State Management
+- **Local component state** via React hooks (useState, useEffect)
+- **Progress persistence** via localStorage
+- **URL-based routing** via React Router (HashRouter for GitHub Pages)
 
-## 📱 Mobile Support
+### Styling Approach
+- **CSS custom properties** for theming (dark/light mode support)
+- **BEM-like naming** for component styles
+- **Mobile-first responsive** design with breakpoints at 768px and 480px
+- **Reduced motion** support for accessibility
 
-The platform is fully optimized for mobile learning:
-- **Responsive design** adapts to all screen sizes
-- **Touch-friendly** interface elements
-- **Mobile sidebar** with overlay navigation
-- **Optimized code editor** for mobile devices
-- **Swipe gestures** for lesson navigation
+## Testing
 
-## 🎨 Customization
+The project includes comprehensive unit tests using:
+- **React Testing Library** for component testing
+- **Jest** as the test runner
 
-The platform uses CSS custom properties for easy theming:
-- Colors and spacing defined in `:root`
-- Dark theme optimized for reduced eye strain
-- Easy to customize and extend
-- Consistent design tokens throughout
+Run tests:
+```bash
+npm test
+```
 
-## 🧪 Testing
+Test coverage includes:
+- Component rendering
+- User interactions
+- Routing behavior
+- localStorage integration
+- Accessibility compliance
 
-The platform includes comprehensive testing:
-- **Unit tests** for all components
-- **Integration tests** for lesson interactions
-- **Code validation** for exercise solutions
-- **Real-time feedback** on code correctness
+## Code Quality
 
-## 🤝 Contributing
+### Standards Applied
+- **PropTypes** for runtime type checking
+- **JSDoc comments** for documentation
+- **ESLint** for code linting
+- **Consistent code style** throughout
+
+### Performance Optimizations
+- **React.memo** for component memoization
+- **useCallback** for stable function references
+- **useMemo** for expensive computations
+- **Conditional rendering** to minimize DOM updates
+
+## Deployment
+
+### GitHub Pages
+
+The project is configured for GitHub Pages deployment:
+
+```bash
+npm run deploy
+```
+
+This will:
+1. Build the production bundle
+2. Deploy to the `gh-pages` branch
+
+**Live URL:** https://sent1nel101.github.io/ReactStudyTool
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -146,24 +194,37 @@ The platform includes comprehensive testing:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+### Development Guidelines
+- Write tests for new components
+- Follow existing code style and patterns
+- Update documentation as needed
+- Ensure accessibility compliance
+
+## Known Limitations
+
+- Code execution uses string matching for tests (not actual execution)
+- Single-user experience (no backend/authentication)
+- Lessons 4-6 have limited exercises (content expansion planned)
+
+## Roadmap
+
+- [ ] Add more lessons (custom hooks, performance, testing)
+- [ ] Implement theme toggle UI
+- [ ] Add TypeScript support
+- [ ] Create achievement/badge system
+- [ ] Add code sharing functionality
+
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Built with [Create React App](https://github.com/facebook/create-react-app)
 - Syntax highlighting by [PrismJS](https://prismjs.com/)
-- Code editor powered by [Monaco Editor](https://microsoft.github.io/monaco-editor/)
-- Icons and design inspiration from modern developer tools
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-1. Check the [Issues](../../issues) page
-2. Create a new issue with detailed description
-3. Include steps to reproduce any bugs
+- Code editor by [@uiw/react-textarea-code-editor](https://github.com/uiwjs/react-textarea-code-editor)
+- Confetti animations by [canvas-confetti](https://github.com/catdad/canvas-confetti)
 
 ---
 
-**Happy Learning!** 🚀 Start building amazing React applications today.
+**Happy Learning!** Start building amazing React applications today.

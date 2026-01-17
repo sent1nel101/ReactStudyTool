@@ -1,0 +1,214 @@
+/**
+ * CodeTester.css - Code Testing Component Styles
+ *
+ * Styles for the code testing interface including:
+ * - Run tests button with loading state
+ * - Test results display with pass/fail indicators
+ * - Error message styling
+ * - Theme-aware color variables
+ */
+
+/* =================================================================
+   Code Tester Container
+   ================================================================= */
+
+.code-tester {
+  margin-top: 20px;
+}
+
+/* =================================================================
+   Actions Bar
+   ================================================================= */
+
+.code-tester__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.code-tester__button {
+  padding: 10px 20px;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: var(--shadow);
+}
+
+.code-tester__button:hover:not(:disabled) {
+  background-color: var(--accent-secondary);
+  transform: translateY(-1px);
+}
+
+.code-tester__button:focus {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
+.code-tester__button--disabled,
+.code-tester__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =================================================================
+   Summary Badge
+   ================================================================= */
+
+.code-tester__summary {
+  font-weight: 500;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: var(--border-radius-sm);
+}
+
+.code-tester__summary--passed {
+  color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--accent-success);
+}
+
+.code-tester__summary--failed {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--accent-danger);
+}
+
+/* =================================================================
+   Test Results Container
+   ================================================================= */
+
+.code-tester__results {
+  border: 1px solid var(--border-primary);
+  border-radius: var(--border-radius);
+  padding: 15px;
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow);
+}
+
+.code-tester__results-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* =================================================================
+   Individual Test Result
+   ================================================================= */
+
+.test-result {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: var(--border-radius-sm);
+  border-left: 4px solid;
+  transition: background-color 0.2s ease;
+}
+
+.test-result--passed {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-left-color: var(--accent-success);
+}
+
+.test-result--failed {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left-color: var(--accent-danger);
+}
+
+.test-result__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-result__icon {
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.test-result--passed .test-result__icon {
+  color: var(--accent-success);
+}
+
+.test-result--failed .test-result__icon {
+  color: var(--accent-danger);
+}
+
+.test-result__description {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+/* =================================================================
+   Error Display
+   ================================================================= */
+
+.test-result__error {
+  margin-top: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-family: 'Fira Code', 'Fira Mono', monospace;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: var(--border-radius-sm);
+  color: var(--accent-danger);
+  word-break: break-word;
+}
+
+.test-result__error-label {
+  font-weight: 600;
+}
+
+/* =================================================================
+   Responsive Design
+   ================================================================= */
+
+@media (max-width: 768px) {
+  .code-tester__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .code-tester__button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .code-tester__summary {
+    text-align: center;
+  }
+
+  .code-tester__results {
+    padding: 12px;
+  }
+
+  .test-result {
+    padding: 8px 10px;
+  }
+
+  .test-result__description {
+    font-size: 13px;
+  }
+}
+
+/* =================================================================
+   Accessibility - Reduced Motion
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .code-tester__button,
+  .test-result {
+    transition: none;
+  }
+
+  .code-tester__button:hover:not(:disabled) {
+    transform: none;
+  }
+}

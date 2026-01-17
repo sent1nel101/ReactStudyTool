@@ -1,0 +1,117 @@
+/**
+ * App.css - Application-level Styles
+ *
+ * Contains styles for the main App component including:
+ * - Application container and layout
+ * - Header styling with gradient background
+ * - Responsive design adjustments
+ */
+
+/* =================================================================
+   Application Container
+   ================================================================= */
+
+.app-container {
+  min-height: 100vh;
+  background: var(--gradient-bg-subtle);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
+}
+
+/* =================================================================
+   Header Styles
+   ================================================================= */
+
+.app-header {
+  background: var(--gradient-primary);
+  padding: 20px 0;
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid var(--border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header-tagline {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* =================================================================
+   Responsive Design
+   ================================================================= */
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 15px 0;
+  }
+
+  .header-content {
+    padding: 0 15px;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+
+  .header-tagline {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* =================================================================
+   Skip Link for Accessibility
+   ================================================================= */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent-primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 1000;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
